@@ -4,6 +4,8 @@
 
 static volatile int sink = 0;
 
+void scheduling_test(int n);
+
 static void burn(int n)
 {
   for (int i = 0; i < n; i++)
@@ -16,8 +18,7 @@ int main(int argc, char **argv)
   if (argc == 2)
     t = atoi(argv[1]);
 
-  printf(1, "T = %d\n", t);
-
+  printf(1, "------ Base tests ------\n");
   if (settickets(0) == 0)
   {
     printf(1, "FAIL: settickets(0) should fail\n");
@@ -31,7 +32,24 @@ int main(int argc, char **argv)
 
   printf(1, "PASS: settickets validation\n");
 
-  //----- scheduling test -------//
+  printf(1, "------ Scheduling test short ------\n");
+  scheduling_test(10000000);
+
+  for (int k = 0; k < 200; k++)
+    burn(200000);
+
+  printf(1, "------ Scheduling test long ------\n");
+  scheduling_test(20005000);
+
+  for (int k = 0; k < 200; k++)
+    burn(200000);
+
+  printf(1, "testlottery: done\n");
+  exit();
+}
+
+void scheduling_test(int n)
+{
   int pids[3];
   int tickets[3] = {40, 20, 80};
   int i;
@@ -48,10 +66,11 @@ int main(int argc, char **argv)
     {
       settickets(tickets[i]);
       sleep(100);
-      burn(100000000);
+      burn(n);
       exit();
     }
-    else {
+    else
+    {
       pids[i] = pid;
     }
   }
@@ -68,10 +87,4 @@ int main(int argc, char **argv)
       }
     }
   }
-
-  for (int k = 0; k < 200; k++)
-    burn(200000);
-
-  printf(1, "testlottery: done\n");
-  exit();
 }
