@@ -89,3 +89,13 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+int sys_settickets(void){
+   int n;
+   argint(0, &n);
+   if(n < 1){
+      cprintf("N must be greater than 1.\n");
+      return -1;   
+   }
+   return settickets(n);
+}
