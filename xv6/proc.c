@@ -8,6 +8,8 @@
 #include "spinlock.h"
 #include "rand.h"
 
+int DEBUG = 1;
+
 struct
 {
   struct spinlock lock;
@@ -372,7 +374,6 @@ void scheduler(void)
 
           break;
         };
-
       }
     }
     release(&ptable.lock);
@@ -565,7 +566,11 @@ int settickets(int n)
 
   acquire(&ptable.lock);
   myproc()->tickets = n;
-  cprintf("PID %d has been given %d tickets\n", myproc()->pid, myproc()->tickets);
+  if(DEBUG)
+  {
+    cprintf("PID %d has been given %d tickets\n", myproc()->pid, myproc()->tickets);
+  }
+
   release(&ptable.lock);
 
   return 0;
