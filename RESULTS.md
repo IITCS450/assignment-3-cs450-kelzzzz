@@ -1,7 +1,7 @@
 # Lottery Scheduler Experiment Results
 
 ## 1. Setup
-The experiment was conducted on a modified xv6 kernel using a lottery scheduling algorithm. 
+The experiment was conducted on xv6 using a lottery scheduling algorithm. There is a DEBUG flag set to `1` in proc.c to print tickets given to processes.
 - **Environment:** xv6 on QEMU.
 - **Process Count:** 3 child processes per test.
 - **Ticket Distribution:** 
@@ -19,14 +19,14 @@ Based on the results, there is a clear distinction between short-burst workloads
 ### Short Runs vs. Long Runs
 
 
-- **Short Runs:** In the "short" tests, the exit order was inconsistent. For example, in Trial 1, the child with 20 tickets exited before the child with 80 tickets, and another the child with 40 exited before 20 and 80.
+- **Short Runs:** In the short tests, the exit order was inconsistent. For example, in Trial 1, the child with 20 tickets exited before the child with 80 tickets, and in another the child with 40 exited before 20 and 80.
 
-- **Long Runs:** In the "long" tests, the scheduler consistently favored the higher ticket counts. In all three trials, the exit order was 80 -> 40 -> 20.
+- **Long Runs:** In the long tests, the scheduler consistently favored the higher ticket counts. In all three trials, the exit order was 80 -> 40 -> 20.
 
 ### Convergence and Variance
-The experimental data confirms the probabilistic nature of the lottery scheduler:
-1. **Variance:** In the short term, "luck" (random number generation) plays a significant role. A process with fewer tickets can win several consecutive time slices.
-2. **Convergence:** As the number of scheduling events ($n$) increases, the actual CPU time allocated to each process approaches the theoretical probability ($tickets / total\_tickets$). This is why the "Long" tests more accurately reflect the ticket ratios, while "Short" tests do not.
+The experimental data is evidence of the probabilistic nature of a lottery scheduler:
+1. **Variance:** In the short term, RNG plays a significant role. A process with fewer tickets can win several consecutive time slices because there are fewer "draws" of tickets overall. Additionally, as ticket counts are smaller, variance is a little greater since they have closer to equal chances of winning.
+2. **Convergence:** As the number of scheduling events ($n$) increases, the CPU time allocated to each process approaches the probability ($tickets / total\_tickets$). This is why the long tests more accurately reflect the ticket ratios, while short tests do not.
 
 ## 4. Conclusion
 The implementation successfully validates that ticket counts influence CPU share. While high variance is present in small workloads, the scheduler achieves fair proportional sharing over longer execution periods.
